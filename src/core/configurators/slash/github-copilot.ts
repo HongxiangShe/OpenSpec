@@ -3,6 +3,7 @@ import { SlashCommandId } from '../../templates/index.js';
 
 const FILE_PATHS: Record<SlashCommandId, string> = {
   proposal: '.github/prompts/openspec-proposal.prompt.md',
+  update: '.github/prompts/openspec-update.prompt.md',
   apply: '.github/prompts/openspec-apply.prompt.md',
   archive: '.github/prompts/openspec-archive.prompt.md'
 };
@@ -10,6 +11,11 @@ const FILE_PATHS: Record<SlashCommandId, string> = {
 const FRONTMATTER: Record<SlashCommandId, string> = {
   proposal: `---
 description: Scaffold a new OpenSpec change and validate strictly.
+---
+
+$ARGUMENTS`,
+  update: `---
+description: Continue refining an existing OpenSpec change proposal.
 ---
 
 $ARGUMENTS`,

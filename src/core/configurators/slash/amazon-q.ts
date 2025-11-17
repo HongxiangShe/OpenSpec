@@ -3,6 +3,7 @@ import { SlashCommandId } from '../../templates/index.js';
 
 const FILE_PATHS: Record<SlashCommandId, string> = {
   proposal: '.amazonq/prompts/openspec-proposal.md',
+  update: '.amazonq/prompts/openspec-update.md',
   apply: '.amazonq/prompts/openspec-apply.md',
   archive: '.amazonq/prompts/openspec-archive.md'
 };
@@ -13,6 +14,15 @@ description: Scaffold a new OpenSpec change and validate strictly.
 ---
 
 The user has requested the following change proposal. Use the openspec instructions to create their change proposal.
+
+<UserRequest>
+  $ARGUMENTS
+</UserRequest>`,
+  update: `---
+description: Continue refining an existing OpenSpec change proposal.
+---
+
+The user wants to continue refining an existing change. Confirm the change ID, review the current proposal/tasks/specs, and capture their requested updates.
 
 <UserRequest>
   $ARGUMENTS

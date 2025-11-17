@@ -118,8 +118,12 @@ More notes here.`;
       testDir,
       '.claude/commands/openspec/proposal.md'
     );
+    const updatePath = path.join(
+      testDir,
+      '.claude/commands/openspec/update.md'
+    );
     await fs.mkdir(path.dirname(proposalPath), { recursive: true });
-    const initialContent = `---
+    const initialProposal = `---
 name: OpenSpec: Proposal
 description: Old description
 category: OpenSpec
@@ -128,7 +132,18 @@ tags: [openspec, change]
 <!-- OPENSPEC:START -->
 Old slash content
 <!-- OPENSPEC:END -->`;
-    await fs.writeFile(proposalPath, initialContent);
+    await fs.writeFile(proposalPath, initialProposal);
+
+    const initialUpdate = `---
+name: OpenSpec: Update
+description: Old description
+category: OpenSpec
+tags: [openspec, update]
+---
+<!-- OPENSPEC:START -->
+Outdated update content
+<!-- OPENSPEC:END -->`;
+    await fs.writeFile(updatePath, initialUpdate);
 
     const consoleSpy = vi.spyOn(console, 'log');
 
@@ -142,6 +157,12 @@ Old slash content
     );
     expect(updated).not.toContain('Old slash content');
 
+    const refreshedUpdate = await fs.readFile(updatePath, 'utf-8');
+    expect(refreshedUpdate).toContain('name: OpenSpec: Update');
+    expect(refreshedUpdate).toContain('Continue refining an existing OpenSpec change proposal.');
+    expect(refreshedUpdate).toContain('Identify which change to update');
+    expect(refreshedUpdate).not.toContain('Outdated update content');
+
     const [logMessage] = consoleSpy.mock.calls[0];
     expect(logMessage).toContain(
       'Updated OpenSpec instructions (openspec/AGENTS.md'
@@ -150,6 +171,39 @@ Old slash content
     expect(logMessage).toContain(
       'Updated slash commands: .claude/commands/openspec/proposal.md'
     );
+    expect(logMessage).toContain(
+      '.claude/commands/openspec/update.md'
+    );
+
+    consoleSpy.mockRestore();
+  });
+
+  it('should refresh existing Codex update prompt files', async () => {
+    const promptsDir = path.join(process.env.CODEX_HOME!, 'prompts');
+    await fs.mkdir(promptsDir, { recursive: true });
+    const updatePath = path.join(promptsDir, 'openspec-update.md');
+    const initialContent = `---
+description: Old description
+argument-hint: change-id or request
+---
+
+<!-- OPENSPEC:START -->
+Stale codex body
+<!-- OPENSPEC:END -->`;
+    await fs.writeFile(updatePath, initialContent);
+
+    const consoleSpy = vi.spyOn(console, 'log');
+
+    await updateCommand.execute(testDir);
+
+    const updatedContent = await fs.readFile(updatePath, 'utf-8');
+    expect(updatedContent).toContain('description: Continue refining an existing OpenSpec change proposal.');
+    expect(updatedContent).toContain('argument-hint: change-id or request');
+    expect(updatedContent).toContain('Identify which change to update');
+    expect(updatedContent).not.toContain('Stale codex body');
+
+    const [logMessage] = consoleSpy.mock.calls[0];
+    expect(logMessage).toContain('.codex/prompts/openspec-update.md');
 
     consoleSpy.mockRestore();
   });

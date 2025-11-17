@@ -9,6 +9,9 @@ import { SlashCommandId } from '../../templates/index.js';
 const FILE_PATHS: Record<SlashCommandId, string> = {
   // Create and validate new change proposals
   proposal: '.qoder/commands/openspec/proposal.md',
+
+  // Continue refining an existing change
+  update: '.qoder/commands/openspec/update.md',
   
   // Implement approved changes with task tracking
   apply: '.qoder/commands/openspec/apply.md',
@@ -29,6 +32,12 @@ description: Scaffold a new OpenSpec change and validate strictly.
 category: OpenSpec
 tags: [openspec, change]
 ---`,
+  update: `---
+name: OpenSpec: Update
+description: Continue refining an existing OpenSpec change proposal.
+category: OpenSpec
+tags: [openspec, update]
+---`,
   apply: `---
 name: OpenSpec: Apply
 description: Implement an approved OpenSpec change and keep tasks in sync.
@@ -47,7 +56,7 @@ tags: [openspec, archive]
  * Qoder Slash Command Configurator
  * 
  * Manages OpenSpec slash commands for Qoder AI assistant.
- * Creates three workflow commands: proposal, apply, and archive.
+ * Creates four workflow commands: proposal, update, apply, and archive.
  * Uses colon-separated command format (/openspec:proposal).
  * 
  * @extends {SlashCommandConfigurator}
@@ -62,7 +71,7 @@ export class QoderSlashCommandConfigurator extends SlashCommandConfigurator {
   /**
    * Get relative file path for a slash command
    * 
-   * @param {SlashCommandId} id - Command identifier (proposal, apply, or archive)
+   * @param {SlashCommandId} id - Command identifier (proposal, update, apply, or archive)
    * @returns {string} Relative path from project root to command file
    */
   protected getRelativePath(id: SlashCommandId): string {
@@ -75,7 +84,7 @@ export class QoderSlashCommandConfigurator extends SlashCommandConfigurator {
    * Frontmatter defines how the command appears in Qoder's UI,
    * including display name, description, and categorization.
    * 
-   * @param {SlashCommandId} id - Command identifier (proposal, apply, or archive)
+   * @param {SlashCommandId} id - Command identifier (proposal, update, apply, or archive)
    * @returns {string} YAML frontmatter block with command metadata
    */
   protected getFrontmatter(id: SlashCommandId): string {

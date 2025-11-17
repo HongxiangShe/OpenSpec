@@ -1,4 +1,4 @@
-export type SlashCommandId = 'proposal' | 'apply' | 'archive';
+export type SlashCommandId = 'proposal' | 'update' | 'apply' | 'archive';
 
 // English templates
 const baseGuardrails = `**Guardrails**
@@ -21,6 +21,23 @@ const proposalReferences = `**Reference**
 - Use \`openspec show <id> --json --deltas-only\` or \`openspec show <spec> --type spec\` to inspect details when validation fails.
 - Search existing requirements with \`rg -n "Requirement:|Scenario:" openspec/specs\` before writing new ones.
 - Explore the codebase with \`rg <keyword>\`, \`ls\`, or direct file reads so proposals align with current implementation realities.`;
+
+const updateGuardrails = `${baseGuardrails}\n- Confirm you are iterating on an existing change instead of starting a new proposal.\n- Identify any vague or ambiguous details and ask the necessary follow-up questions before editing files.`;
+
+const updateSteps = `**Steps**
+1. Identify which change to update: prefer slash-command arguments; otherwise run \`openspec list\`, share likely candidates, and confirm a single change ID before editing.
+2. Read the latest \`changes/<id>/proposal.md\`, \`tasks.md\`, \`design.md\` (if present), and every \`changes/<id>/specs/<capability>/spec.md\` file so you understand the accepted scope.
+3. Based on the new input, update the relevant documents:
+   - **proposal.md**: Expand Why/What/Impact as needed
+   - **tasks.md**: Add, modify, or mark tasks complete
+   - **design.md**: Adjust only when architecture or cross-system decisions change
+   - **specs/<capability>/spec.md**: Edit spec deltas using \`## ADDED|MODIFIED|REMOVED Requirements\` with at least one \`#### Scenario:\` per requirement (MODIFIED requirements must include the full requirement content, not partial changes)
+4. Run \`openspec validate <id> --strict\` after editing; if blockers remain, summarize the unanswered questions or dependencies instead of guessing.`;
+
+const updateReferences = `**Reference**
+- Use \`openspec show <id> --json --deltas-only\` to review the existing proposal and spec state before making edits.
+- Search live capabilities with \`rg -n "Requirement:|Scenario:" openspec/specs\` whenever you need to compare against deployed behaviour.
+- Debug delta parsing with \`openspec show <id> --json | jq '.deltas'\` if validation fails.`;
 
 const applySteps = `**Steps**
 Track these steps as TODOs and complete them one by one.
@@ -77,6 +94,23 @@ const proposalReferencesZh = `**参考**
 
 const applyGuardrailsZh = `${languageInstructionZh}\n\n${baseGuardrailsZh}`;
 
+const updateGuardrailsZh = `${languageInstructionZh}\n\n${baseGuardrailsZh}\n- 确认这是在既有变更上继续迭代，而不是开启新的提案。\n- 识别任何模糊或不明确的细节，并在编辑文件前提出必要的后续问题。`;
+
+const updateStepsZh = `**步骤**
+1. 确认要迭代的 change-id：优先读取斜杠命令参数；否则运行 \`openspec list\`、分享候选并在编辑前锁定唯一 ID。
+2. 阅读最新的 \`changes/<id>/proposal.md\`、\`tasks.md\`、\`design.md\`（如存在）以及所有 \`changes/<id>/specs/<capability>/spec.md\`，了解当前共识和范围。
+3. 根据用户输入更新相关文档：
+   - **proposal.md**: 补充或修改 Why/What/Impact
+   - **tasks.md**: 添加、修改任务项或标记完成状态
+   - **design.md**: 仅在架构决策或跨系统交互改变时调整
+   - **specs/<capability>/spec.md**: 使用 \`## 新增|修改|删除 需求\` 编辑规范增量，每个需求至少包含一个 \`#### 场景：\`（修改需求必须包含完整的需求内容，而非部分修改）
+4. 编辑后运行 \`openspec validate <id> --strict\`；若仍有阻塞，请总结悬而未决的问题或依赖，而不是猜测。`;
+
+const updateReferencesZh = `**参考**
+- 复盘已有内容时，使用 \`openspec show <id> --json --deltas-only\` 检视当前提案及规范。
+- 对齐既有能力时，使用 \`rg -n "Requirement:|Scenario:" openspec/specs\` 搜索现有需求。
+- 验证失败时，使用 \`openspec show <id> --json | jq '.deltas'\` 调试 delta 解析。`;
+
 const applyStepsZh = `**步骤**
 将这些步骤作为待办事项跟踪，并逐一完成。
 1. 阅读 \`changes/<id>/proposal.md\`、\`design.md\`（如果存在）和 \`tasks.md\` 以确认范围和验收标准。
@@ -107,12 +141,14 @@ const archiveReferencesZh = `**参考**
 
 const slashCommandBodiesEn: Record<SlashCommandId, string> = {
   proposal: [proposalGuardrails, proposalSteps, proposalReferences].join('\n\n'),
+  update: [updateGuardrails, updateSteps, updateReferences].join('\n\n'),
   apply: [baseGuardrails, applySteps, applyReferences].join('\n\n'),
   archive: [baseGuardrails, archiveSteps, archiveReferences].join('\n\n')
 };
 
 const slashCommandBodiesZh: Record<SlashCommandId, string> = {
   proposal: [proposalGuardrailsZh, proposalStepsZh, proposalReferencesZh].join('\n\n'),
+  update: [updateGuardrailsZh, updateStepsZh, updateReferencesZh].join('\n\n'),
   apply: [applyGuardrailsZh, applyStepsZh, applyReferencesZh].join('\n\n'),
   archive: [archiveGuardrailsZh, archiveStepsZh, archiveReferencesZh].join('\n\n')
 };

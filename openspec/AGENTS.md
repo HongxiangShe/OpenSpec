@@ -111,6 +111,14 @@ openspec show [change] --json --deltas-only
 openspec validate [change] --strict
 ```
 
+### Slash Commands
+
+Natively supported AI tools expose four slash commands per change lifecycle:
+`/openspec:proposal`, `/openspec:update`, `/openspec:apply`, `/openspec:archive`
+(tools that rely on `-` or `.md` suffixes keep the same stage order). Use
+`/openspec:update` whenever you need to refine the same change after the
+proposal exists so specs, tasks, and deltas stay synchronized.
+
 ### Command Flags
 
 - `--json` - Machine-readable output

@@ -3,6 +3,7 @@ import { SlashCommandId } from '../../templates/index.js';
 
 const FILE_PATHS: Record<SlashCommandId, string> = {
   proposal: '.codebuddy/commands/openspec/proposal.md',
+  update: '.codebuddy/commands/openspec/update.md',
   apply: '.codebuddy/commands/openspec/apply.md',
   archive: '.codebuddy/commands/openspec/archive.md'
 };
@@ -13,6 +14,12 @@ name: OpenSpec: Proposal
 description: Scaffold a new OpenSpec change and validate strictly.
 category: OpenSpec
 tags: [openspec, change]
+---`,
+  update: `---
+name: OpenSpec: Update
+description: Continue refining an existing OpenSpec change proposal.
+category: OpenSpec
+tags: [openspec, update]
 ---`,
   apply: `---
 name: OpenSpec: Apply
@@ -40,4 +47,3 @@ export class CodeBuddySlashCommandConfigurator extends SlashCommandConfigurator 
     return FRONTMATTER[id];
   }
 }
-

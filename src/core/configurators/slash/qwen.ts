@@ -14,6 +14,7 @@ import { SlashCommandId } from '../../templates/index.js';
  */
 const FILE_PATHS: Record<SlashCommandId, string> = {
   proposal: '.qwen/commands/openspec-proposal.md',
+  update: '.qwen/commands/openspec-update.md',
   apply: '.qwen/commands/openspec-apply.md',
   archive: '.qwen/commands/openspec-archive.md'
 };
@@ -29,6 +30,12 @@ name: /openspec-proposal
 id: openspec-proposal
 category: OpenSpec
 description: Scaffold a new OpenSpec change and validate strictly.
+---`,
+  update: `---
+name: /openspec-update
+id: openspec-update
+category: OpenSpec
+description: Continue refining an existing OpenSpec change proposal.
 ---`,
   apply: `---
 name: /openspec-apply

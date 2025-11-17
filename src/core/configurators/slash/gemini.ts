@@ -5,12 +5,14 @@ import { OPENSPEC_MARKERS } from '../../config.js';
 
 const FILE_PATHS: Record<SlashCommandId, string> = {
   proposal: '.gemini/commands/openspec/proposal.toml',
+  update: '.gemini/commands/openspec/update.toml',
   apply: '.gemini/commands/openspec/apply.toml',
   archive: '.gemini/commands/openspec/archive.toml'
 };
 
 const DESCRIPTIONS: Record<SlashCommandId, string> = {
   proposal: 'Scaffold a new OpenSpec change and validate strictly.',
+  update: 'Continue refining an existing OpenSpec change proposal.',
   apply: 'Implement an approved OpenSpec change and keep tasks in sync.',
   archive: 'Archive a deployed OpenSpec change and update specs.'
 };

@@ -3,6 +3,7 @@ import { SlashCommandId } from '../../templates/index.js';
 
 const FILE_PATHS: Record<SlashCommandId, string> = {
   proposal: '.augment/commands/openspec-proposal.md',
+  update: '.augment/commands/openspec-update.md',
   apply: '.augment/commands/openspec-apply.md',
   archive: '.augment/commands/openspec-archive.md'
 };
@@ -11,6 +12,10 @@ const FRONTMATTER: Record<SlashCommandId, string> = {
   proposal: `---
 description: Scaffold a new OpenSpec change and validate strictly.
 argument-hint: feature description or request
+---`,
+  update: `---
+description: Continue refining an existing OpenSpec change proposal.
+argument-hint: change-id or request
 ---`,
   apply: `---
 description: Implement an approved OpenSpec change and keep tasks in sync.
@@ -34,4 +39,3 @@ export class AuggieSlashCommandConfigurator extends SlashCommandConfigurator {
     return FRONTMATTER[id];
   }
 }
-

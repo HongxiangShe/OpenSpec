@@ -3,6 +3,7 @@ import { SlashCommandId } from "../../templates/index.js";
 
 const FILE_PATHS: Record<SlashCommandId, string> = {
   proposal: ".kilocode/workflows/openspec-proposal.md",
+  update: ".kilocode/workflows/openspec-update.md",
   apply: ".kilocode/workflows/openspec-apply.md",
   archive: ".kilocode/workflows/openspec-archive.md"
 };

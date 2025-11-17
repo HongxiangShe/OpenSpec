@@ -101,7 +101,8 @@
 
 ### Minor Changes
 
-- Add GitHub Copilot slash command support. OpenSpec now writes prompts to `.github/prompts/openspec-{proposal,apply,archive}.prompt.md` with YAML frontmatter and `$ARGUMENTS` placeholder, and refreshes them on `openspec update`.
+- Add GitHub Copilot slash command support. OpenSpec now writes prompts to `.github/prompts/openspec-{proposal,update,apply,archive}.prompt.md` with YAML frontmatter and `$ARGUMENTS` placeholder, and refreshes them on `openspec update`.
+- Add `/openspec-update` slash command templates across every supported AI tool so assistants can iterate on existing changes between proposal and apply. `openspec init` now scaffolds update files, `openspec update` refreshes them when present, and documentation reflects the fourth workflow stage.
 
 ## 0.8.1
 

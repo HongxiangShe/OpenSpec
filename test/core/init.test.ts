@@ -193,6 +193,10 @@ describe('InitCommand', () => {
         testDir,
         '.windsurf/workflows/openspec-proposal.md'
       );
+      const wsUpdate = path.join(
+        testDir,
+        '.windsurf/workflows/openspec-update.md'
+      );
       const wsApply = path.join(
         testDir,
         '.windsurf/workflows/openspec-apply.md'
@@ -203,6 +207,7 @@ describe('InitCommand', () => {
       );
 
       expect(await fileExists(wsProposal)).toBe(true);
+      expect(await fileExists(wsUpdate)).toBe(true);
       expect(await fileExists(wsApply)).toBe(true);
       expect(await fileExists(wsArchive)).toBe(true);
 
@@ -212,6 +217,13 @@ describe('InitCommand', () => {
       expect(proposalContent).toContain('auto_execution_mode: 3');
       expect(proposalContent).toContain('<!-- OPENSPEC:START -->');
       expect(proposalContent).toContain('**Guardrails**');
+
+      const updateContent = await fs.readFile(wsUpdate, 'utf-8');
+      expect(updateContent).toContain('---');
+      expect(updateContent).toContain('description: Continue refining an existing OpenSpec change proposal.');
+      expect(updateContent).toContain('auto_execution_mode: 3');
+      expect(updateContent).toContain('<!-- OPENSPEC:START -->');
+      expect(updateContent).toContain('Identify which change to update');
 
       const applyContent = await fs.readFile(wsApply, 'utf-8');
       expect(applyContent).toContain('---');
@@ -255,6 +267,10 @@ describe('InitCommand', () => {
         testDir,
         '.claude/commands/openspec/proposal.md'
       );
+      const claudeUpdate = path.join(
+        testDir,
+        '.claude/commands/openspec/update.md'
+      );
       const claudeApply = path.join(
         testDir,
         '.claude/commands/openspec/apply.md'
@@ -265,6 +281,7 @@ describe('InitCommand', () => {
       );
 
       expect(await fileExists(claudeProposal)).toBe(true);
+      expect(await fileExists(claudeUpdate)).toBe(true);
       expect(await fileExists(claudeApply)).toBe(true);
       expect(await fileExists(claudeArchive)).toBe(true);
 
@@ -272,6 +289,11 @@ describe('InitCommand', () => {
       expect(proposalContent).toContain('name: OpenSpec: Proposal');
       expect(proposalContent).toContain('<!-- OPENSPEC:START -->');
       expect(proposalContent).toContain('**Guardrails**');
+
+      const updateContent = await fs.readFile(claudeUpdate, 'utf-8');
+      expect(updateContent).toContain('name: OpenSpec: Update');
+      expect(updateContent).toContain('description: Continue refining an existing OpenSpec change proposal.');
+      expect(updateContent).toContain('Identify which change to update');
 
       const applyContent = await fs.readFile(claudeApply, 'utf-8');
       expect(applyContent).toContain('name: OpenSpec: Apply');
@@ -294,6 +316,10 @@ describe('InitCommand', () => {
         testDir,
         '.cursor/commands/openspec-proposal.md'
       );
+      const cursorUpdate = path.join(
+        testDir,
+        '.cursor/commands/openspec-update.md'
+      );
       const cursorApply = path.join(
         testDir,
         '.cursor/commands/openspec-apply.md'
@@ -304,12 +330,18 @@ describe('InitCommand', () => {
       );
 
       expect(await fileExists(cursorProposal)).toBe(true);
+      expect(await fileExists(cursorUpdate)).toBe(true);
       expect(await fileExists(cursorApply)).toBe(true);
       expect(await fileExists(cursorArchive)).toBe(true);
 
       const proposalContent = await fs.readFile(cursorProposal, 'utf-8');
       expect(proposalContent).toContain('name: /openspec-proposal');
       expect(proposalContent).toContain('<!-- OPENSPEC:END -->');
+
+      const updateContent = await fs.readFile(cursorUpdate, 'utf-8');
+      expect(updateContent).toContain('name: /openspec-update');
+      expect(updateContent).toContain('description: Continue refining an existing OpenSpec change proposal.');
+      expect(updateContent).toContain('Identify which change to update');
 
       const applyContent = await fs.readFile(cursorApply, 'utf-8');
       expect(applyContent).toContain('id: openspec-apply');
@@ -396,6 +428,10 @@ describe('InitCommand', () => {
         testDir,
         '.opencode/command/openspec-proposal.md'
       );
+      const openCodeUpdate = path.join(
+        testDir,
+        '.opencode/command/openspec-update.md'
+      );
       const openCodeApply = path.join(
         testDir,
         '.opencode/command/openspec-apply.md'
@@ -406,6 +442,7 @@ describe('InitCommand', () => {
       );
 
       expect(await fileExists(openCodeProposal)).toBe(true);
+      expect(await fileExists(openCodeUpdate)).toBe(true);
       expect(await fileExists(openCodeApply)).toBe(true);
       expect(await fileExists(openCodeArchive)).toBe(true);
 
@@ -415,6 +452,13 @@ describe('InitCommand', () => {
         'description: Scaffold a new OpenSpec change and validate strictly.'
       );
       expect(proposalContent).toContain('<!-- OPENSPEC:START -->');
+
+      const updateContent = await fs.readFile(openCodeUpdate, 'utf-8');
+      expect(updateContent).toContain('agent: build');
+      expect(updateContent).toContain(
+        'description: Continue refining an existing OpenSpec change proposal.'
+      );
+      expect(updateContent).toContain('Confirm the change ID');
 
       const applyContent = await fs.readFile(openCodeApply, 'utf-8');
       expect(applyContent).toContain('agent: build');
@@ -441,6 +485,10 @@ describe('InitCommand', () => {
         testDir,
         '.qwen/commands/openspec-proposal.md'
       );
+      const updatePath = path.join(
+        testDir,
+        '.qwen/commands/openspec-update.md'
+      );
       const applyPath = path.join(
         testDir,
         '.qwen/commands/openspec-apply.md'
@@ -452,6 +500,7 @@ describe('InitCommand', () => {
 
       expect(await fileExists(qwenConfigPath)).toBe(true);
       expect(await fileExists(proposalPath)).toBe(true);
+      expect(await fileExists(updatePath)).toBe(true);
       expect(await fileExists(applyPath)).toBe(true);
       expect(await fileExists(archivePath)).toBe(true);
 
@@ -465,6 +514,12 @@ describe('InitCommand', () => {
       expect(proposalContent).toContain('category: OpenSpec');
       expect(proposalContent).toContain('description: Scaffold a new OpenSpec change and validate strictly.');
       expect(proposalContent).toContain('<!-- OPENSPEC:START -->');
+
+      const updateContent = await fs.readFile(updatePath, 'utf-8');
+      expect(updateContent).toContain('name: /openspec-update');
+      expect(updateContent).toContain('category: OpenSpec');
+      expect(updateContent).toContain('description: Continue refining an existing OpenSpec change proposal.');
+      expect(updateContent).toContain('Identify which change to update');
 
       const applyContent = await fs.readFile(applyPath, 'utf-8');
       expect(applyContent).toContain('name: /openspec-apply');
@@ -505,6 +560,10 @@ describe('InitCommand', () => {
         testDir,
         '.clinerules/workflows/openspec-proposal.md'
       );
+      const clineUpdate = path.join(
+        testDir,
+        '.clinerules/workflows/openspec-update.md'
+      );
       const clineApply = path.join(
         testDir,
         '.clinerules/workflows/openspec-apply.md'
@@ -515,6 +574,7 @@ describe('InitCommand', () => {
       );
 
       expect(await fileExists(clineProposal)).toBe(true);
+      expect(await fileExists(clineUpdate)).toBe(true);
       expect(await fileExists(clineApply)).toBe(true);
       expect(await fileExists(clineArchive)).toBe(true);
 
@@ -523,6 +583,11 @@ describe('InitCommand', () => {
       expect(proposalContent).toContain('Scaffold a new OpenSpec change and validate strictly.');
       expect(proposalContent).toContain('<!-- OPENSPEC:START -->');
       expect(proposalContent).toContain('**Guardrails**');
+
+      const updateContent = await fs.readFile(clineUpdate, 'utf-8');
+      expect(updateContent).toContain('# OpenSpec: Update');
+      expect(updateContent).toContain('Continue refining an existing OpenSpec change proposal.');
+      expect(updateContent).toContain('Identify which change to update');
 
       const applyContent = await fs.readFile(clineApply, 'utf-8');
       expect(applyContent).toContain('# OpenSpec: Apply');
@@ -544,6 +609,10 @@ describe('InitCommand', () => {
         testDir,
         '.factory/commands/openspec-proposal.md'
       );
+      const factoryUpdate = path.join(
+        testDir,
+        '.factory/commands/openspec-update.md'
+      );
       const factoryApply = path.join(
         testDir,
         '.factory/commands/openspec-apply.md'
@@ -554,6 +623,7 @@ describe('InitCommand', () => {
       );
 
       expect(await fileExists(factoryProposal)).toBe(true);
+      expect(await fileExists(factoryUpdate)).toBe(true);
       expect(await fileExists(factoryApply)).toBe(true);
       expect(await fileExists(factoryArchive)).toBe(true);
 
@@ -564,6 +634,16 @@ describe('InitCommand', () => {
       expect(
         /<!-- OPENSPEC:START -->([\s\S]*?)<!-- OPENSPEC:END -->/u.exec(
           proposalContent
+        )?.[1]
+      ).toContain('$ARGUMENTS');
+
+      const updateContent = await fs.readFile(factoryUpdate, 'utf-8');
+      expect(updateContent).toContain('description: Continue refining an existing OpenSpec change proposal.');
+      expect(updateContent).toContain('argument-hint: change-id or request');
+      expect(updateContent).toContain('Identify which change to update');
+      expect(
+        /<!-- OPENSPEC:START -->([\s\S]*?)<!-- OPENSPEC:END -->/u.exec(
+          updateContent
         )?.[1]
       ).toContain('$ARGUMENTS');
 
@@ -597,6 +677,10 @@ describe('InitCommand', () => {
         testDir,
         '.codex/prompts/openspec-proposal.md'
       );
+      const updatePath = path.join(
+        testDir,
+        '.codex/prompts/openspec-update.md'
+      );
       const applyPath = path.join(
         testDir,
         '.codex/prompts/openspec-apply.md'
@@ -607,6 +691,7 @@ describe('InitCommand', () => {
       );
 
       expect(await fileExists(proposalPath)).toBe(true);
+      expect(await fileExists(updatePath)).toBe(true);
       expect(await fileExists(applyPath)).toBe(true);
       expect(await fileExists(archivePath)).toBe(true);
 
@@ -616,6 +701,12 @@ describe('InitCommand', () => {
       expect(proposalContent).toContain('$ARGUMENTS');
       expect(proposalContent).toContain('<!-- OPENSPEC:START -->');
       expect(proposalContent).toContain('**Guardrails**');
+
+      const updateContent = await fs.readFile(updatePath, 'utf-8');
+      expect(updateContent).toContain('description: Continue refining an existing OpenSpec change proposal.');
+      expect(updateContent).toContain('argument-hint: change-id or request');
+      expect(updateContent).toContain('$ARGUMENTS');
+      expect(updateContent).toContain('Identify which change to update');
 
       const applyContent = await fs.readFile(applyPath, 'utf-8');
       expect(applyContent).toContain('description: Implement an approved OpenSpec change and keep tasks in sync.');
@@ -639,6 +730,10 @@ describe('InitCommand', () => {
         testDir,
         '.kilocode/workflows/openspec-proposal.md'
       );
+      const updatePath = path.join(
+        testDir,
+        '.kilocode/workflows/openspec-update.md'
+      );
       const applyPath = path.join(
         testDir,
         '.kilocode/workflows/openspec-apply.md'
@@ -649,6 +744,7 @@ describe('InitCommand', () => {
       );
 
       expect(await fileExists(proposalPath)).toBe(true);
+      expect(await fileExists(updatePath)).toBe(true);
       expect(await fileExists(applyPath)).toBe(true);
       expect(await fileExists(archivePath)).toBe(true);
 
@@ -656,6 +752,10 @@ describe('InitCommand', () => {
       expect(proposalContent).toContain('<!-- OPENSPEC:START -->');
       expect(proposalContent).toContain('**Guardrails**');
       expect(proposalContent).not.toContain('---\n');
+
+      const updateContent = await fs.readFile(updatePath, 'utf-8');
+      expect(updateContent).toContain('Identify which change to update');
+      expect(updateContent).not.toContain('---\n');
 
       const applyContent = await fs.readFile(applyPath, 'utf-8');
       expect(applyContent).toContain('Work through tasks sequentially');
@@ -675,6 +775,10 @@ describe('InitCommand', () => {
         testDir,
         '.github/prompts/openspec-proposal.prompt.md'
       );
+      const updatePath = path.join(
+        testDir,
+        '.github/prompts/openspec-update.prompt.md'
+      );
       const applyPath = path.join(
         testDir,
         '.github/prompts/openspec-apply.prompt.md'
@@ -685,6 +789,7 @@ describe('InitCommand', () => {
       );
 
       expect(await fileExists(proposalPath)).toBe(true);
+      expect(await fileExists(updatePath)).toBe(true);
       expect(await fileExists(applyPath)).toBe(true);
       expect(await fileExists(archivePath)).toBe(true);
 
@@ -694,6 +799,11 @@ describe('InitCommand', () => {
       expect(proposalContent).toContain('$ARGUMENTS');
       expect(proposalContent).toContain('<!-- OPENSPEC:START -->');
       expect(proposalContent).toContain('**Guardrails**');
+
+      const updateContent = await fs.readFile(updatePath, 'utf-8');
+      expect(updateContent).toContain('description: Continue refining an existing OpenSpec change proposal.');
+      expect(updateContent).toContain('$ARGUMENTS');
+      expect(updateContent).toContain('Identify which change to update');
 
       const applyContent = await fs.readFile(applyPath, 'utf-8');
       expect(applyContent).toContain('---');
@@ -914,6 +1024,10 @@ describe('InitCommand', () => {
         testDir,
         '.amazonq/prompts/openspec-proposal.md'
       );
+      const updatePath = path.join(
+        testDir,
+        '.amazonq/prompts/openspec-update.md'
+      );
       const applyPath = path.join(
         testDir,
         '.amazonq/prompts/openspec-apply.md'
@@ -924,6 +1038,7 @@ describe('InitCommand', () => {
       );
 
       expect(await fileExists(proposalPath)).toBe(true);
+      expect(await fileExists(updatePath)).toBe(true);
       expect(await fileExists(applyPath)).toBe(true);
       expect(await fileExists(archivePath)).toBe(true);
 
@@ -933,6 +1048,12 @@ describe('InitCommand', () => {
       expect(proposalContent).toContain('$ARGUMENTS');
       expect(proposalContent).toContain('<!-- OPENSPEC:START -->');
       expect(proposalContent).toContain('**Guardrails**');
+
+      const updateContent = await fs.readFile(updatePath, 'utf-8');
+      expect(updateContent).toContain('---');
+      expect(updateContent).toContain('description: Continue refining an existing OpenSpec change proposal.');
+      expect(updateContent).toContain('$ARGUMENTS');
+      expect(updateContent).toContain('Identify which change to update');
 
       const applyContent = await fs.readFile(applyPath, 'utf-8');
       expect(applyContent).toContain('---');
@@ -962,6 +1083,10 @@ describe('InitCommand', () => {
         testDir,
         '.augment/commands/openspec-proposal.md'
       );
+      const auggieUpdate = path.join(
+        testDir,
+        '.augment/commands/openspec-update.md'
+      );
       const auggieApply = path.join(
         testDir,
         '.augment/commands/openspec-apply.md'
@@ -972,6 +1097,7 @@ describe('InitCommand', () => {
       );
 
       expect(await fileExists(auggieProposal)).toBe(true);
+      expect(await fileExists(auggieUpdate)).toBe(true);
       expect(await fileExists(auggieApply)).toBe(true);
       expect(await fileExists(auggieArchive)).toBe(true);
 
@@ -981,6 +1107,11 @@ describe('InitCommand', () => {
       expect(proposalContent).toContain('argument-hint: feature description or request');
       expect(proposalContent).toContain('<!-- OPENSPEC:START -->');
       expect(proposalContent).toContain('**Guardrails**');
+
+      const updateContent = await fs.readFile(auggieUpdate, 'utf-8');
+      expect(updateContent).toContain('description: Continue refining an existing OpenSpec change proposal.');
+      expect(updateContent).toContain('argument-hint: change-id or request');
+      expect(updateContent).toContain('Identify which change to update');
 
       const applyContent = await fs.readFile(auggieApply, 'utf-8');
       expect(applyContent).toContain('---');
@@ -1016,6 +1147,10 @@ describe('InitCommand', () => {
         testDir,
         '.codebuddy/commands/openspec/proposal.md'
       );
+      const codeBuddyUpdate = path.join(
+        testDir,
+        '.codebuddy/commands/openspec/update.md'
+      );
       const codeBuddyApply = path.join(
         testDir,
         '.codebuddy/commands/openspec/apply.md'
@@ -1026,6 +1161,7 @@ describe('InitCommand', () => {
       );
 
       expect(await fileExists(codeBuddyProposal)).toBe(true);
+      expect(await fileExists(codeBuddyUpdate)).toBe(true);
       expect(await fileExists(codeBuddyApply)).toBe(true);
       expect(await fileExists(codeBuddyArchive)).toBe(true);
 
@@ -1036,6 +1172,11 @@ describe('InitCommand', () => {
       expect(proposalContent).toContain('category: OpenSpec');
       expect(proposalContent).toContain('<!-- OPENSPEC:START -->');
       expect(proposalContent).toContain('**Guardrails**');
+
+      const updateContent = await fs.readFile(codeBuddyUpdate, 'utf-8');
+      expect(updateContent).toContain('name: OpenSpec: Update');
+      expect(updateContent).toContain('description: Continue refining an existing OpenSpec change proposal.');
+      expect(updateContent).toContain('Identify which change to update');
 
       const applyContent = await fs.readFile(codeBuddyApply, 'utf-8');
       expect(applyContent).toContain('---');
@@ -1104,6 +1245,10 @@ describe('InitCommand', () => {
         testDir,
         '.crush/commands/openspec/proposal.md'
       );
+      const crushUpdate = path.join(
+        testDir,
+        '.crush/commands/openspec/update.md'
+      );
       const crushApply = path.join(
         testDir,
         '.crush/commands/openspec/apply.md'
@@ -1114,6 +1259,7 @@ describe('InitCommand', () => {
       );
 
       expect(await fileExists(crushProposal)).toBe(true);
+      expect(await fileExists(crushUpdate)).toBe(true);
       expect(await fileExists(crushApply)).toBe(true);
       expect(await fileExists(crushArchive)).toBe(true);
 
@@ -1125,6 +1271,12 @@ describe('InitCommand', () => {
       expect(proposalContent).toContain('tags: [openspec, change]');
       expect(proposalContent).toContain('<!-- OPENSPEC:START -->');
       expect(proposalContent).toContain('**Guardrails**');
+
+      const updateContent = await fs.readFile(crushUpdate, 'utf-8');
+      expect(updateContent).toContain('name: OpenSpec: Update');
+      expect(updateContent).toContain('description: Continue refining an existing OpenSpec change proposal.');
+      expect(updateContent).toContain('tags: [openspec, update]');
+      expect(updateContent).toContain('Identify which change to update');
 
       const applyContent = await fs.readFile(crushApply, 'utf-8');
       expect(applyContent).toContain('---');
@@ -1164,6 +1316,10 @@ describe('InitCommand', () => {
         testDir,
         '.cospec/openspec/commands/openspec-proposal.md'
       );
+      const costrictUpdate = path.join(
+        testDir,
+        '.cospec/openspec/commands/openspec-update.md'
+      );
       const costrictApply = path.join(
         testDir,
         '.cospec/openspec/commands/openspec-apply.md'
@@ -1174,6 +1330,7 @@ describe('InitCommand', () => {
       );
 
       expect(await fileExists(costrictProposal)).toBe(true);
+      expect(await fileExists(costrictUpdate)).toBe(true);
       expect(await fileExists(costrictApply)).toBe(true);
       expect(await fileExists(costrictArchive)).toBe(true);
 
@@ -1183,6 +1340,11 @@ describe('InitCommand', () => {
       expect(proposalContent).toContain('argument-hint: feature description or request');
       expect(proposalContent).toContain('<!-- OPENSPEC:START -->');
       expect(proposalContent).toContain('**Guardrails**');
+
+      const updateContent = await fs.readFile(costrictUpdate, 'utf-8');
+      expect(updateContent).toContain('description: "Continue refining an existing OpenSpec change proposal."');
+      expect(updateContent).toContain('argument-hint: change-id or request');
+      expect(updateContent).toContain('Identify which change to update');
 
       const applyContent = await fs.readFile(costrictApply, 'utf-8');
       expect(applyContent).toContain('---');
@@ -1218,6 +1380,10 @@ describe('InitCommand', () => {
         testDir,
         '.roo/commands/openspec-proposal.md'
       );
+      const rooUpdate = path.join(
+        testDir,
+        '.roo/commands/openspec-update.md'
+      );
       const rooApply = path.join(
         testDir,
         '.roo/commands/openspec-apply.md'
@@ -1228,12 +1394,18 @@ describe('InitCommand', () => {
       );
 
       expect(await fileExists(rooProposal)).toBe(true);
+      expect(await fileExists(rooUpdate)).toBe(true);
       expect(await fileExists(rooApply)).toBe(true);
       expect(await fileExists(rooArchive)).toBe(true);
 
       const proposalContent = await fs.readFile(rooProposal, 'utf-8');
       expect(proposalContent).toContain('# OpenSpec: Proposal');
       expect(proposalContent).toContain('**Guardrails**');
+
+      const updateContent = await fs.readFile(rooUpdate, 'utf-8');
+      expect(updateContent).toContain('# OpenSpec: Update');
+      expect(updateContent).toContain('Continue refining an existing OpenSpec change proposal.');
+      expect(updateContent).toContain('Identify which change to update');
 
       const applyContent = await fs.readFile(rooApply, 'utf-8');
       expect(applyContent).toContain('# OpenSpec: Apply');
@@ -1265,6 +1437,10 @@ describe('InitCommand', () => {
         testDir,
         '.qoder/commands/openspec/proposal.md'
       );
+      const qoderUpdate = path.join(
+        testDir,
+        '.qoder/commands/openspec/update.md'
+      );
       const qoderApply = path.join(
         testDir,
         '.qoder/commands/openspec/apply.md'
@@ -1275,6 +1451,7 @@ describe('InitCommand', () => {
       );
 
       expect(await fileExists(qoderProposal)).toBe(true);
+      expect(await fileExists(qoderUpdate)).toBe(true);
       expect(await fileExists(qoderApply)).toBe(true);
       expect(await fileExists(qoderArchive)).toBe(true);
 
@@ -1285,6 +1462,12 @@ describe('InitCommand', () => {
       expect(proposalContent).toContain('category: OpenSpec');
       expect(proposalContent).toContain('<!-- OPENSPEC:START -->');
       expect(proposalContent).toContain('**Guardrails**');
+
+      const updateContent = await fs.readFile(qoderUpdate, 'utf-8');
+      expect(updateContent).toContain('name: OpenSpec: Update');
+      expect(updateContent).toContain('description: Continue refining an existing OpenSpec change proposal.');
+      expect(updateContent).toContain('category: OpenSpec');
+      expect(updateContent).toContain('Identify which change to update');
 
       const applyContent = await fs.readFile(qoderApply, 'utf-8');
       expect(applyContent).toContain('---');

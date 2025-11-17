@@ -5,6 +5,7 @@ import { OPENSPEC_MARKERS } from "../../config.js";
 
 const FILE_PATHS: Record<SlashCommandId, string> = {
   proposal: ".opencode/command/openspec-proposal.md",
+  update: ".opencode/command/openspec-update.md",
   apply: ".opencode/command/openspec-apply.md",
   archive: ".opencode/command/openspec-archive.md",
 };
@@ -15,6 +16,15 @@ agent: build
 description: Scaffold a new OpenSpec change and validate strictly.
 ---
 The user has requested the following change proposal. Use the openspec instructions to create their change proposal.
+<UserRequest>
+  $ARGUMENTS
+</UserRequest>
+`,
+  update: `---
+agent: build
+description: Continue refining an existing OpenSpec change proposal.
+---
+The user wants to continue working on an existing OpenSpec change. Confirm the change ID, review the current proposal/tasks/specs, and capture their requested updates.
 <UserRequest>
   $ARGUMENTS
 </UserRequest>
