@@ -16,7 +16,7 @@ export class TemplateManager {
     return [
       {
         path: 'AGENTS.md',
-        content: agentsTemplate
+        content: (ctx: ProjectContext) => agentsTemplate(ctx)
       },
       {
         path: 'project.md',
@@ -41,8 +41,8 @@ export class TemplateManager {
     return agentsRootStubTemplate;
   }
 
-  static getSlashCommandBody(id: SlashCommandId): string {
-    return getSlashCommandBody(id);
+  static getSlashCommandBody(id: SlashCommandId, language?: string): string {
+    return getSlashCommandBody(id, language);
   }
 }
 

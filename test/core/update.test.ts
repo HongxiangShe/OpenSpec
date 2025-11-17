@@ -11,6 +11,7 @@ describe('UpdateCommand', () => {
   let testDir: string;
   let updateCommand: UpdateCommand;
   let prevCodexHome: string | undefined;
+  let prevOpenspecHome: string | undefined;
 
   beforeEach(async () => {
     // Create a temporary test directory
@@ -26,6 +27,8 @@ describe('UpdateCommand', () => {
     // Route Codex global directory into the test sandbox
     prevCodexHome = process.env.CODEX_HOME;
     process.env.CODEX_HOME = path.join(testDir, '.codex');
+    prevOpenspecHome = process.env.OPENSPEC_HOME;
+    process.env.OPENSPEC_HOME = path.join(testDir, '.openspec-home');
   });
 
   afterEach(async () => {
@@ -33,6 +36,8 @@ describe('UpdateCommand', () => {
     await fs.rm(testDir, { recursive: true, force: true });
     if (prevCodexHome === undefined) delete process.env.CODEX_HOME;
     else process.env.CODEX_HOME = prevCodexHome;
+    if (prevOpenspecHome === undefined) delete process.env.OPENSPEC_HOME;
+    else process.env.OPENSPEC_HOME = prevOpenspecHome;
   });
 
   it('should update only existing CLAUDE.md file', async () => {
@@ -494,6 +499,36 @@ Old body
     );
 
     consoleSpy.mockRestore();
+  });
+
+  it('localizes Codex prompts when language preference is zh-CN', async () => {
+    await writeUserConfig({ language: { preferred: 'zh-CN' } });
+
+    const codexPath = path.join(
+      testDir,
+      '.codex/prompts/openspec-proposal.md'
+    );
+    await fs.mkdir(path.dirname(codexPath), { recursive: true });
+    await fs.writeFile(
+      codexPath,
+      `---
+description: Old description
+argument-hint: details
+---
+
+$ARGUMENTS
+<!-- OPENSPEC:START -->
+Old content
+<!-- OPENSPEC:END -->`
+    );
+
+    await updateCommand.execute(testDir);
+
+    const updated = await fs.readFile(codexPath, 'utf-8');
+    expect(updated).toContain('**语言要求**');
+    expect(updated).toContain('请使用简体中文与我沟通');
+    expect(updated).toContain('**规范要求**');
+    expect(updated).not.toContain('Old content');
   });
 
   it('should not create missing Codex prompts on update', async () => {
@@ -1565,3 +1600,13 @@ Old content
     writeSpy.mockRestore();
   });
 });
+
+async function writeUserConfig(payload: Record<string, unknown>): Promise<void> {
+  const configDir =
+    process.env.OPENSPEC_HOME ?? path.join(os.tmpdir(), '.openspec-home');
+  await fs.mkdir(configDir, { recursive: true });
+  await fs.writeFile(
+    path.join(configDir, 'config.json'),
+    JSON.stringify(payload, null, 2)
+  );
+}

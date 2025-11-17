@@ -24,6 +24,8 @@ import {
   OPENSPEC_MARKERS,
 } from './config.js';
 import { PALETTE } from './styles/palette.js';
+import { UserConfigService, type ConfigSummary } from './user-config.js';
+import { isInteractive } from '../utils/interactive.js';
 
 const PROGRESS_SPINNER = {
   interval: 80,
@@ -371,15 +373,22 @@ const toolSelectionWizard = createPrompt<string[], ToolWizardConfig>(
 type InitCommandOptions = {
   prompt?: ToolSelectionPrompt;
   tools?: string;
+  noInteractive?: boolean;
+  configService?: UserConfigService;
 };
 
 export class InitCommand {
   private readonly prompt: ToolSelectionPrompt;
   private readonly toolsArg?: string;
+  private readonly noInteractive: boolean;
+  private readonly userConfigService: UserConfigService;
+  private userConfigSummary?: ConfigSummary;
 
   constructor(options: InitCommandOptions = {}) {
     this.prompt = options.prompt ?? ((config) => toolSelectionWizard(config));
     this.toolsArg = options.tools;
+    this.noInteractive = options.noInteractive ?? false;
+    this.userConfigService = options.configService ?? new UserConfigService();
   }
 
   async execute(targetPath: string): Promise<void> {
@@ -489,6 +498,15 @@ export class InitCommand {
       return nonInteractiveSelection;
     }
 
+    const interactive = this.canPrompt();
+
+    if (!interactive) {
+      throw new Error(
+        'Non-interactive runs require --tools. ' +
+        'Use --tools=all, --tools=none, or --tools=claude,cursor'
+      );
+    }
+
     // Fall back to interactive mode
     return this.promptForAITools(existingTools, extendMode);
   }
@@ -571,7 +589,7 @@ export class InitCommand {
           .map((tool) => tool.value)
       : [];
 
-    const initialSelected = Array.from(new Set(initialNativeSelection));
+    const initialSelected = initialNativeSelection;
 
     const choices: ToolWizardChoice[] = [
       {
@@ -628,6 +646,18 @@ export class InitCommand {
       initialSelected,
     });
   }
+
+  private canPrompt(): boolean {
+    return isInteractive(this.noInteractive);
+  }
+
+  private async getUserConfigSummary(): Promise<ConfigSummary> {
+    if (!this.userConfigSummary) {
+      this.userConfigSummary = await this.userConfigService.getSummary();
+    }
+    return this.userConfigSummary;
+  }
+
 
   private async getExistingToolStates(
     projectPath: string,
@@ -737,8 +767,12 @@ export class InitCommand {
     config: OpenSpecConfig,
     skipExisting: boolean
   ): Promise<void> {
+    const configSummary = await this.getUserConfigSummary();
     const context: ProjectContext = {
-      // Could be enhanced with prompts for project details
+      language: configSummary.derived.language.active,
+      languageSource: configSummary.values.language?.preferred ? 'config' : 'default',
+      languageConfigPath: configSummary.location,
+      // Future: capture project metadata from prompts
     };
 
     const templates = TemplateManager.getTemplates(context);
@@ -770,6 +804,9 @@ export class InitCommand {
       openspecDir
     );
 
+    const configSummary = await this.getUserConfigSummary();
+    const language = configSummary.derived.language.active;
+
     for (const toolId of toolIds) {
       const configurator = ToolRegistry.get(toolId);
       if (configurator && configurator.isAvailable) {
@@ -778,7 +815,7 @@ export class InitCommand {
 
       const slashConfigurator = SlashCommandRegistry.get(toolId);
       if (slashConfigurator && slashConfigurator.isAvailable) {
-        await slashConfigurator.generateAll(projectPath, openspecDir);
+        await slashConfigurator.generateAll(projectPath, openspecDir, language);
       }
     }
 

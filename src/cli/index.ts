@@ -13,6 +13,7 @@ import { registerSpecCommand } from '../commands/spec.js';
 import { ChangeCommand } from '../commands/change.js';
 import { ValidateCommand } from '../commands/validate.js';
 import { ShowCommand } from '../commands/show.js';
+import { UserConfigCommand } from '../commands/config.js';
 
 const program = new Command();
 const require = createRequire(import.meta.url);
@@ -41,7 +42,8 @@ program
   .command('init [path]')
   .description('Initialize OpenSpec in your project')
   .option('--tools <tools>', toolsOptionDescription)
-  .action(async (targetPath = '.', options?: { tools?: string }) => {
+  .option('--no-interactive', 'Disable interactive prompts')
+  .action(async (targetPath = '.', options?: { tools?: string; noInteractive?: boolean }) => {
     try {
       // Validate that the path is a valid directory
       const resolvedPath = path.resolve(targetPath);
@@ -64,6 +66,7 @@ program
       
       const initCommand = new InitCommand({
         tools: options?.tools,
+        noInteractive: options?.noInteractive,
       });
       await initCommand.execute(targetPath);
     } catch (error) {
@@ -114,6 +117,66 @@ program
       await viewCommand.execute('.');
     } catch (error) {
       console.log(); // Empty line for spacing
+      ora().fail(`Error: ${(error as Error).message}`);
+      process.exit(1);
+    }
+  });
+
+const configCmd = program
+  .command('config')
+  .description('Manage OpenSpec user preferences');
+
+configCmd
+  .option('--json', 'Output configuration in JSON format')
+  .action(async (options?: { json?: boolean }) => {
+    try {
+      const command = new UserConfigCommand();
+      await command.list(options);
+    } catch (error) {
+      console.log();
+      ora().fail(`Error: ${(error as Error).message}`);
+      process.exit(1);
+    }
+  });
+
+configCmd
+  .command('set <key> <value>')
+  .description('Set a configuration value')
+  .action(async (key: string, value: string) => {
+    try {
+      const command = new UserConfigCommand();
+      await command.set(key, value);
+    } catch (error) {
+      console.log();
+      ora().fail(`Error: ${(error as Error).message}`);
+      process.exit(1);
+    }
+  });
+
+configCmd
+  .command('unset <key>')
+  .description('Remove a configuration value')
+  .action(async (key: string) => {
+    try {
+      const command = new UserConfigCommand();
+      await command.unset(key);
+    } catch (error) {
+      console.log();
+      ora().fail(`Error: ${(error as Error).message}`);
+      process.exit(1);
+    }
+  });
+
+configCmd
+  .command('reset')
+  .description('Reset the configuration file to defaults')
+  .option('-y, --yes', 'Skip confirmation prompt')
+  .action(async (options?: { yes?: boolean }) => {
+    try {
+      const command = new UserConfigCommand();
+      await command.reset(options);
+    } catch (error) {
+      console.log();
       ora().fail(`Error: ${(error as Error).message}`);
       process.exit(1);
     }

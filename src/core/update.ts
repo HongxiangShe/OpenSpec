@@ -4,6 +4,7 @@ import { OPENSPEC_DIR_NAME } from './config.js';
 import { ToolRegistry } from './configurators/registry.js';
 import { SlashCommandRegistry } from './configurators/slash/registry.js';
 import { agentsTemplate } from './templates/agents-template.js';
+import { UserConfigService } from './user-config.js';
 
 export class UpdateCommand {
   async execute(projectPath: string): Promise<void> {
@@ -18,8 +19,14 @@ export class UpdateCommand {
 
     // 2. Update AGENTS.md (full replacement)
     const agentsPath = path.join(openspecPath, 'AGENTS.md');
-
-    await FileSystemUtils.writeFile(agentsPath, agentsTemplate);
+    const configService = new UserConfigService();
+    const summary = await configService.getSummary();
+    const content = agentsTemplate({
+      language: summary.derived.language.active,
+      languageSource: summary.values.language?.preferred ? 'config' : 'default',
+      languageConfigPath: summary.location,
+    });
+    await FileSystemUtils.writeFile(agentsPath, content);
 
     // 3. Update existing AI tool configuration files only
     const configurators = ToolRegistry.getAll();
@@ -66,6 +73,8 @@ export class UpdateCommand {
       }
     }
 
+    const language = summary.derived.language.active;
+
     for (const slashConfigurator of slashConfigurators) {
       if (!slashConfigurator.isAvailable) {
         continue;
@@ -74,7 +83,8 @@ export class UpdateCommand {
       try {
         const updated = await slashConfigurator.updateExisting(
           resolvedProjectPath,
-          openspecPath
+          openspecPath,
+          language
         );
         updatedSlashFiles.push(...updated);
       } catch (error) {

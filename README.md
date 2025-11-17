@@ -169,6 +169,15 @@ Populate your project context:
 
 Use `openspec/project.md` to define project-level conventions, standards, architectural patterns, and other guidelines that should be followed across all changes.
 
+### Optional: Configure Defaults & Language
+
+Run `openspec config` to inspect or update the per-user configuration that OpenSpec stores in `~/.config/openspec/config.json` (override with `OPENSPEC_HOME`).
+
+- `openspec config` — view the resolved file path, current values, and warnings (`--json` for automation)
+- `openspec config set language.preferred zh-CN` — localize generated instructions/prompts; switch back with `en-US`
+
+Currently English (`en-US`) and Simplified Chinese (`zh-CN`) are fully supported. Invalid locale tags are rejected with actionable errors.
+
 ### Create Your First Change
 
 Here's a real example showing the complete OpenSpec workflow. This works with any AI tool. Those with native slash commands will recognize the shortcuts automatically.

@@ -1,7 +1,7 @@
 import path from "path";
 import os from "os";
 import { SlashCommandConfigurator } from "./base.js";
-import { SlashCommandId, TemplateManager } from "../../templates/index.js";
+import { SlashCommandId } from "../../templates/index.js";
 import { FileSystemUtils } from "../../../utils/file-system.js";
 import { OPENSPEC_MARKERS } from "../../config.js";
 
@@ -55,10 +55,10 @@ $ARGUMENTS`,
 
   // Codex discovers prompts globally. Generate directly in the global directory
   // and wrap shared body with markers.
-  async generateAll(projectPath: string, _openspecDir: string): Promise<string[]> {
+  async generateAll(projectPath: string, _openspecDir: string, language?: string): Promise<string[]> {
     const createdOrUpdated: string[] = [];
     for (const target of this.getTargets()) {
-      const body = TemplateManager.getSlashCommandBody(target.id).trim();
+      const body = this.getBody(target.id, language);
       const promptsDir = this.getGlobalPromptsDir();
       const filePath = FileSystemUtils.joinPath(
         promptsDir,
@@ -82,7 +82,7 @@ $ARGUMENTS`,
     return createdOrUpdated;
   }
 
-  async updateExisting(projectPath: string, _openspecDir: string): Promise<string[]> {
+  async updateExisting(projectPath: string, _openspecDir: string, language?: string): Promise<string[]> {
     const updated: string[] = [];
     for (const target of this.getTargets()) {
       const promptsDir = this.getGlobalPromptsDir();
@@ -91,7 +91,7 @@ $ARGUMENTS`,
         path.basename(target.path)
       );
       if (await FileSystemUtils.fileExists(filePath)) {
-        const body = TemplateManager.getSlashCommandBody(target.id).trim();
+        const body = this.getBody(target.id, language);
         await this.updateFullFile(filePath, target.id, body);
         updated.push(target.path);
       }

@@ -37,17 +37,26 @@ describe('InitCommand', () => {
   let testDir: string;
   let initCommand: InitCommand;
   let prevCodexHome: string | undefined;
+  let prevOpenspecHome: string | undefined;
+  let prevIsTTY: boolean | undefined;
 
   beforeEach(async () => {
     testDir = path.join(os.tmpdir(), `openspec-init-test-${Date.now()}`);
     await fs.mkdir(testDir, { recursive: true });
     selectionQueue = [];
     mockPrompt.mockReset();
-    initCommand = new InitCommand({ prompt: mockPrompt });
 
     // Route Codex global directory into the test sandbox
     prevCodexHome = process.env.CODEX_HOME;
     process.env.CODEX_HOME = path.join(testDir, '.codex');
+    prevOpenspecHome = process.env.OPENSPEC_HOME;
+    process.env.OPENSPEC_HOME = path.join(testDir, '.openspec-home');
+    initCommand = new InitCommand({ prompt: mockPrompt });
+    prevIsTTY = process.stdin.isTTY;
+    Object.defineProperty(process.stdin, 'isTTY', {
+      value: true,
+      configurable: true,
+    });
 
     // Mock console.log to suppress output during tests
     vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -58,6 +67,12 @@ describe('InitCommand', () => {
     vi.restoreAllMocks();
     if (prevCodexHome === undefined) delete process.env.CODEX_HOME;
     else process.env.CODEX_HOME = prevCodexHome;
+    if (prevOpenspecHome === undefined) delete process.env.OPENSPEC_HOME;
+    else process.env.OPENSPEC_HOME = prevOpenspecHome;
+    Object.defineProperty(process.stdin, 'isTTY', {
+      value: prevIsTTY,
+      configurable: true,
+    });
   });
 
   describe('execute', () => {
@@ -1358,6 +1373,27 @@ describe('InitCommand', () => {
       expect(updatedContent).toContain('<!-- OPENSPEC:END -->');
       expect(updatedContent).toContain('Custom instructions here');
     });
+
+    it('localizes slash commands when language preference is zh-CN but keeps AGENTS.md in English', async () => {
+      await writeUserConfig({ language: { preferred: 'zh-CN' } });
+      initCommand = new InitCommand({ prompt: mockPrompt });
+      queueSelections('claude', DONE);
+
+      await initCommand.execute(testDir);
+
+      // AGENTS.md should stay in English (project-level, language-agnostic)
+      const agentsPath = path.join(testDir, 'openspec', 'AGENTS.md');
+      const agentsContent = await fs.readFile(agentsPath, 'utf-8');
+      expect(agentsContent).toContain('# OpenSpec Instructions');
+      expect(agentsContent).toContain('TL;DR Quick Checklist');
+
+      // But slash commands should be localized to Chinese
+      const proposalPath = path.join(testDir, '.claude', 'commands', 'openspec', 'proposal.md');
+      const proposalContent = await fs.readFile(proposalPath, 'utf-8');
+      expect(proposalContent).toContain('**语言要求**');
+      expect(proposalContent).toContain('请使用简体中文与我沟通');
+      expect(proposalContent).toContain('**规范要求**');
+    });
   });
 
   describe('non-interactive mode', () => {
@@ -1448,6 +1484,17 @@ describe('InitCommand', () => {
 
       await expect(nonInteractiveCommand.execute(testDir)).rejects.toThrow(
         /Cannot combine reserved values "all" or "none" with specific tool IDs/
+      );
+    });
+
+    it('fails fast when --no-interactive runs without --tools', async () => {
+      const nonInteractiveCommand = new InitCommand({
+        prompt: mockPrompt,
+        noInteractive: true,
+      });
+
+      await expect(nonInteractiveCommand.execute(testDir)).rejects.toThrow(
+        /Non-interactive runs require --tools/
       );
     });
   });
@@ -1603,4 +1650,13 @@ async function directoryExists(dirPath: string): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+async function writeUserConfig(payload: Record<string, unknown>): Promise<void> {
+  const configDir = process.env.OPENSPEC_HOME ?? path.join(os.tmpdir(), '.openspec-home');
+  await fs.mkdir(configDir, { recursive: true });
+  await fs.writeFile(
+    path.join(configDir, 'config.json'),
+    JSON.stringify(payload, null, 2)
+  );
 }

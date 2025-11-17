@@ -3,6 +3,9 @@ export interface ProjectContext {
   description?: string;
   techStack?: string[];
   conventions?: string;
+  language?: string;
+  languageSource?: 'default' | 'config';
+  languageConfigPath?: string;
 }
 
 export const projectTemplate = (context: ProjectContext = {}) => `# ${context.projectName || 'Project'} Context
